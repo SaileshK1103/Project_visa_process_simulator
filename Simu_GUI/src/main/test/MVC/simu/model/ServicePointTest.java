@@ -17,15 +17,12 @@ class ServicePointTest {
     private EventType eventType;
     private IControllerMtoV controller;
 
-    /**
-     * Sets up a new {@link ServicePoint} instance and its dependencies before each test.
-     * Initializes the trace level, event list, event type, and controller stub.
-     */
     @BeforeEach
     void setUp() {
 
         // Initialize Trace.traceLevel to avoid NullPointerException
         Trace.setTraceLevel(Trace.Level.INFO);
+
         // Use a real generator
         ContinuousGenerator generator = new Negexp(5.0);
 
@@ -56,11 +53,8 @@ class ServicePointTest {
         servicePoint = new ServicePoint(generator, eventList, eventType, controller);
     }
 
-    /**
-     * Verifies that adding to the queue increases the queue size.
-     */
     @Test
-    void testAddQueueIncreasesQueueSize() {
+    void testAddQueue_IncreasesQueueSize() {
         int numEmployees = servicePoint.getNumEmployees();
         for (int i = 0; i < numEmployees + 1; i++) {
             servicePoint.addQueue(new ApplicationAsCustomer(true, true));
@@ -68,33 +62,24 @@ class ServicePointTest {
         assertTrue(servicePoint.getQueueSize() > 0);
     }
 
-    /**
-     * Verifies that removing from the queue decreases the queue size.
-     */
     @Test
-    void testRemoveQueueDecreasesQueueSize() {
+    void testRemoveQueue_DecreasesQueueSize() {
         ApplicationAsCustomer app = new ApplicationAsCustomer(true, false);
         servicePoint.addQueue(app);
         servicePoint.removeQueue();
         assertEquals(0, servicePoint.getQueueSize());
     }
 
-    /**
-     * Checks that {@link ServicePoint#isReserved()} returns true when the queue is full.
-     */
     @Test
-    void testIsReservedReturnsTrueWhenFull() {
+    void testIsReserved_ReturnsTrueWhenFull() {
         for (int i = 0; i < servicePoint.getNumEmployees(); i++) {
             servicePoint.addQueue(new ApplicationAsCustomer(false, true));
         }
         assertTrue(servicePoint.isReserved());
     }
 
-    /**
-     * Checks that {@link ServicePoint#isOnQueue()} returns true when the queue is not empty.
-     */
     @Test
-    void testIsOnQueueReturnsTrueWhenNotEmpty() {
+    void testIsOnQueue_ReturnsTrueWhenNotEmpty() {
         int numEmployees = servicePoint.getNumEmployees();
         // Add more customers than employees
         for (int i = 0; i < numEmployees + 1; i++) {
@@ -104,26 +89,20 @@ class ServicePointTest {
     }
 
     @Test
-    void testGetTotalDeparturesIncreasesOnRemove() {
+    void testGetTotalDepartures_IncreasesOnRemove() {
         ApplicationAsCustomer app = new ApplicationAsCustomer(true, true);
         servicePoint.addQueue(app);
         servicePoint.removeQueue();
         assertEquals(1, servicePoint.getTotalDepartures());
     }
 
-    /**
-     * Ensures that the average waiting time is zero if there have been no departures.
-     */
     @Test
-    void testGetAverageWaitingTimeZeroIfNoDepartures() {
+    void testGetAverageWaitingTime_ZeroIfNoDepartures() {
         assertEquals(0.0, servicePoint.getAverageWaitingTime());
     }
 
-    /**
-     * Checks that the maximum queue length is tracked correctly.
-     */
     @Test
-    void testGetMaxQueueLengthTracksMax() {
+    void testGetMaxQueueLength_TracksMax() {
         int numEmployees = servicePoint.getNumEmployees();
         // Add more applications than employees
         for (int i = 0; i < numEmployees + 2; i++) {
@@ -133,36 +112,24 @@ class ServicePointTest {
         assertEquals(2, servicePoint.getMaxQueueLength());
     }
 
-    /**
-     * Ensures that utilization is zero if there has been no busy time.
-     */
     @Test
-    void testGetUtilizationReturnsZeroIfNoBusyTime() {
+    void testGetUtilization_ReturnsZeroIfNoBusyTime() {
         assertEquals(0.0, servicePoint.getUtilization(100.0));
     }
 
-    /**
-     * Verifies that the default number of employees is returned.
-     */
     @Test
-    void testGetNumEmployeesReturnsDefault() {
+    void testGetNumEmployees_ReturnsDefault() {
         assertEquals(5, servicePoint.getNumEmployees());
     }
 
-    /**
-     * Checks that adjusting the number of employees updates the count.
-     */
     @Test
-    void testAdjustEmployeesChangesCount() {
+    void testAdjustEmployees_ChangesEmployeeCount() {
         servicePoint.adjustEmployees(10);
         assertEquals(10, servicePoint.getNumEmployees());
     }
 
-    /**
-     * Ensures that the bottleneck check increases the number of employees when the queue is long.
-     */
     @Test
-    void testCheckBottleneckIncreasesEmployees() {
+    void testCheckBottleneck_IncreasesEmployeesIfRequired() {
         int numEmployees = servicePoint.getNumEmployees();
         // Add enough applications so the queue size exceeds 15
         for (int i = 0; i < numEmployees + 16; i++) {
@@ -172,20 +139,14 @@ class ServicePointTest {
         assertEquals(numEmployees + 1, servicePoint.getNumEmployees());
     }
 
-    /**
-     * Verifies that the scheduled event type can be set and retrieved.
-     */
     @Test
     void testSetAndGetEventTypeScheduled() {
         servicePoint.setEventTypeScheduled(EventType.ARRIVAL);
         assertEquals(EventType.ARRIVAL, servicePoint.getEventTypeScheduled());
     }
 
-    /**
-     * Ensures that the service point name is not null.
-     */
     @Test
-    void testGetServicePointNameReturnsName() {
+    void testGetServicePointName_ReturnsSPNames() {
         assertNotNull(servicePoint.getServicePointName());
     }
 }
